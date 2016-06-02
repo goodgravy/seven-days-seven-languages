@@ -38,6 +38,7 @@ module ActsAsCsv
   end
 end
 
+class InvalidNumber < StandardError ; end
 class CsvRow
   attr_accessor :headers, :values
 
@@ -49,6 +50,20 @@ class CsvRow
   def inspect
     [headers, values].map { |things| things.join(', ') }.join("\n")
   end
+
+  def method_missing(name, *args)
+    @values[number_to_integer(name)]
+  rescue InvalidNumber
+    super
+  end
+
+  private
+
+  def number_to_integer(number)
+    numbers = %i(one two three four five six seven eight nine ten)
+    raise InvalidNumber, "Invalid number: #{number}" unless numbers.include? number
+    numbers.index number
+  end
 end
 
 class RubyCsv
@@ -59,4 +74,5 @@ end
 m = RubyCsv.new
 puts m.headers.inspect
 puts m.csv_contents.inspect
-puts m.each { |row| puts row.inspect }
+m.each { |row| puts row.inspect }
+m.each { |row| puts "#{row.one}: #{row.three}" }
