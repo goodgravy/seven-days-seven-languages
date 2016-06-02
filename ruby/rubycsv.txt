@@ -1,0 +1,5 @@
+Name, Age, Height, Weight
+James, 32, 193, 79
+Odette, 33, 175, 60
+Katie, 9, 120, 40
+Ed, 6, 110, 40
