@@ -111,6 +111,8 @@ writeln("-----------------------------------------------------------------------
 
 List2D := List clone
 
+List2D asString = method(self _state asString)
+
 List2D dim := method(x, y,
   # by using _state, we lose the usual List-y methods, e.g.
   # we can't do `List2D atPut` - how could we achieve that?
@@ -131,12 +133,80 @@ List2D get := method(x, y,
 
 l := List2D clone
 l dim(2, 3)
-writeln("get before: " .. l get(1, 1))
-l set(1, 1, "hi")
-writeln("get after: " .. l get(1, 1))
+writeln("get before: " .. l get(1, 2))
+l set(1, 2, "hi")
+writeln("get after: " .. l get(1, 2))
 
 writeln("----------------------------------------------------------------------------")
-# 6. Bonus: Write a transpose method so that (new_matrix get(y, x)) == m a t r i x get(x, y) on the original list.
+# 6. Bonus: Write a transpose method so that (new_matrix get(y, x)) == matrix get(x, y) on the original list.
+
+List2D numRows := method(
+  self _state size
+)
+List2D numCols := method(
+  if(self numRows == 0, return 0)
+
+  self _state first size
+)
+
+List2D transpose := method(
+  if(self numRows == 0, return List2D clone)
+
+  trans := List2D clone
+  trans dim(self numRows, self numCols)
+
+  self _state foreach(rowIndex, row,
+    row foreach(columnIndex, value,
+      trans set(rowIndex, columnIndex, value)
+    )
+  )
+  trans
+)
+
+transL := l transpose
+
+writeln("new_matrix get(2, 1) == matrix get(1, 2): #{transL get(2, 1)} == #{l get(1, 2)}" interpolate)
+
+writeln("----------------------------------------------------------------------------")
 # 7. Write the matrix to a ﬁle, and read a matrix from a ﬁle.
-# 8. Write a program that gives you ten tries to guess a random number from 1–100. If you would like, give a hint of “hotter” or “colder”
-# after the ﬁrst guess.
+
+l set(0, 0, 1)
+l set(0, 1, false)
+l set(0, 2, "jimmy")
+writeln("before writing to file: #{l}" interpolate)
+
+List2D toFile := method(
+  filename,
+  f := File with(filename) remove openForAppending
+  f write(self _state serialized) flush close
+)
+
+List2D fromFile := method(
+  filename,
+  f := File with(filename) openForReading
+  doString(f contents)
+)
+
+outputFile := "output.bin"
+l toFile(outputFile)
+writeln("after reading from file: #{List2D fromFile(outputFile)}" interpolate)
+
+writeln("----------------------------------------------------------------------------")
+# 8. Write a program that gives you ten tries to guess a random number from 1–100. If you would like, give a hint of “hotter” or “colder” after the ﬁrst guess.
+
+target := Random value(0, 100) floor
+lastDelta := nil
+10 repeat(
+  write("What's your guess (0-100): ")
+  guess := File standardInput readLine asNumber
+  if(guess == target,
+    "Correct!" println
+    break
+  )
+
+  delta := (target - guess) abs
+  if(lastDelta,
+    if(delta < lastDelta, "Getting warmer… ", "Getting colder… ") print
+  )
+  lastDelta = delta
+)
