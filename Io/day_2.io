@@ -41,11 +41,71 @@ fibIter(6) println
 fibIter(7) println
 fibIter(8) println
 
-# 2. How would you change / to return 0 if the denominator is zero?
 writeln("----------------------------------------------------------------------------")
+# 2. How would you change / to return 0 if the denominator is zero?
 
+Number origDivide := Number getSlot("/")
+Number / = method(other,
+  if(other == 0,
+    0,
+    self origDivide(other)
+  )
+)
+
+writeln("----------------------------------------------------------------------------")
 # 3. Write a program to add up all of the numbers in a two-dimensional array.
-# 4. Add a slot called m y Av e r a g e to a list that computes the average of all the numbers in a list. What happens if there are no numbers in a list? (Bonus: Raise an Io exception if any item in the list is not a number.)
+
+sum2dv1 := method(
+  arrays,
+  outerSum := 0
+  arrays foreach(
+    array,
+    innerSum := 0
+    array foreach(el, innerSum = innerSum + el)
+    outerSum = outerSum + innerSum
+  )
+)
+
+# Io> list(1, 2, 3) reduce(+)
+# ==> 6
+# Io> list(1, 2, 3) reduce(xs, x, xs + x)
+# ==> 6
+# Io> list(1, 2, 3) reduce(+, -6) // Passing the initial value.
+# ==> 0
+# Io> list(1, 2, 3) reduce(xs, x, xs + x, -6) ==> 0
+
+sum2dv2 := method(
+  arrays,
+  arrays reduce(
+    sum,
+    array,
+    sum + array reduce(+),
+    0
+  )
+)
+
+inputArrays := list(list(1, 2, 3), list(4, 5, 6), list(9))
+writeln("sum2dv1 result (should be 30): " ..  sum2dv1(inputArrays))
+writeln("sum2dv2 result (should be 30): " ..  sum2dv2(inputArrays))
+
+writeln("----------------------------------------------------------------------------")
+# 4. Add a slot called myAverage to a list that computes the average of all the numbers in a list. What happens if there are no numbers in a list? (Bonus: Raise an Io exception if any item in the list is not a number.)
+
+List myAverage := method(
+  sum := self reduce(
+    accumulator,
+    value,
+    if(value type != "Number", Exception raise("#{value} is not a Number" interpolate))
+    accumulator + value,
+    0
+  )
+  sum / self size
+)
+
+list(1,2,3) myAverage println
+list(1,2,4) myAverage println
+list() myAverage println
+
 # 5. Write a prototype for a two-dimensional list. The dim(x, y) method should allocate a list of y lists that are x elements long. set(x, y , v a l u e ) should set a value, and get(x, y) should return that value.
 # 6. Bonus: Write a transpose method so that (new_matrix get(y, x)) == m a t r i x get(x, y) on the original list.
 # 7. Write the matrix to a ﬁle, and read a matrix from a ﬁle.
