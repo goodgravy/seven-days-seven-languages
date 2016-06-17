@@ -106,7 +106,36 @@ list(1,2,3) myAverage println
 list(1,2,4) myAverage println
 list() myAverage println
 
-# 5. Write a prototype for a two-dimensional list. The dim(x, y) method should allocate a list of y lists that are x elements long. set(x, y , v a l u e ) should set a value, and get(x, y) should return that value.
+writeln("----------------------------------------------------------------------------")
+# 5. Write a prototype for a two-dimensional list. The dim(x, y) method should allocate a list of y lists that are x elements long. set(x, y , value) should set a value, and get(x, y) should return that value.
+
+List2D := List clone
+
+List2D dim := method(x, y,
+  # by using _state, we lose the usual List-y methods, e.g.
+  # we can't do `List2D atPut` - how could we achieve that?
+  self _state := Range 1 to(y) map(
+    Range 1 to(x) map(nil)
+  )
+  self
+)
+
+List2D set := method(x, y, value,
+  row := self _state at(y)
+  row atPut(x, value)
+)
+
+List2D get := method(x, y,
+  self _state at(y) at(x)
+)
+
+l := List2D clone
+l dim(2, 3)
+writeln("get before: " .. l get(1, 1))
+l set(1, 1, "hi")
+writeln("get after: " .. l get(1, 1))
+
+writeln("----------------------------------------------------------------------------")
 # 6. Bonus: Write a transpose method so that (new_matrix get(y, x)) == m a t r i x get(x, y) on the original list.
 # 7. Write the matrix to a ﬁle, and read a matrix from a ﬁle.
 # 8. Write a program that gives you ten tries to guess a random number from 1–100. If you would like, give a hint of “hotter” or “colder”
