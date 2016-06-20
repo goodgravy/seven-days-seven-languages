@@ -22,3 +22,16 @@ Builder  ul(
   li("Lua"),
   li("JavaScript")
 )
+
+writeln("-------------------------------------------------")
+# Create a list syntax that uses brackets.
+
+squareBrackets := method(
+  result := List clone;
+  call message arguments foreach(argument, result append(argument))
+  result
+)
+
+[1, false, "three"] println
+
+writeln("-------------------------------------------------")
