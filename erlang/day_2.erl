@@ -28,8 +28,8 @@ allX(Row) -> all(Row, x).
 allO(Row) -> all(Row, o).
 
 analyse_tic(Board) ->
-  X_win = lists:any(fun(Row) -> allX(Row) end, rows(Board)),
-  O_win = lists:any(fun(Row) -> allO(Row) end, rows(Board)),
+  X_win = lists:any(fun allX/1, rows(Board)),
+  O_win = lists:any(fun allO/1, rows(Board)),
   BoardFull = lists:all(fun(Square) -> Square /= "_" end, Board),
 
   if
