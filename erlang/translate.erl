@@ -12,7 +12,7 @@ loop() ->
       loop();
     {Pid, _} ->
       Pid ! "I don't understand",
-      loop()
+      exit({translator, die, at, erlang:time()})
   end.
 
 translate(To, Word) ->
